@@ -2,8 +2,8 @@
 
 ## Introduction
 This firmware development project focuses on an ESP32-based appliance control system utilizing IoT. Through AWS IoT, it enables remote appliance management via a dedicated mobile application. The ESP32 manages appliances via GPIO-connected relays and updates status on an LCD screen through I2C. Communication with the mobile app is facilitated through AWS Device Shadow and MQTT protocols.
+
 ![local.conf file](overall.png)
-![local.conf file](hardware.png)
 
 The firmware developemnt was divided into:
 * WiFi Connection/Disconnection:  Event group was used to achieve schronizing the occurence of wifi connection to the main task(thread)
@@ -43,5 +43,5 @@ $ idf.py build
 
 - Flash your project and monitor/debug logs
 ```bash
-$ idf.py flash monitor -p [COM]
+$ idf.py -p [COM_NUMBER] flash monitor 
 ```

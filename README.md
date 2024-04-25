@@ -36,7 +36,7 @@ $ cd time_based_appliance_control
 
 - Set up your credentials on IoT core and obtain the keys and certs
 
-- Build yor project
+- Build your project
 ```bash
 $ idf.py build
 ```

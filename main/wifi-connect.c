@@ -20,23 +20,23 @@ void event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t
 {
     switch (event_id)
     {
-    case SYSTEM_EVENT_STA_START:
+    case WIFI_EVENT_STA_START:
         ESP_LOGI(TAG, "connecting...");
         esp_wifi_connect();
         break;
 
-    case SYSTEM_EVENT_STA_CONNECTED:
+    case WIFI_EVENT_STA_CONNECTED:
         ESP_LOGI(TAG, "CONNECTED");
         wifi_status(1);
         break;
 
-    case SYSTEM_EVENT_STA_DISCONNECTED:
+    case WIFI_EVENT_STA_DISCONNECTED:
         ESP_LOGI(TAG, "DISCONNECTED");
         wifi_status(0);
         esp_wifi_connect();
         break;
 
-    case SYSTEM_EVENT_STA_GOT_IP:
+    case IP_EVENT_STA_GOT_IP:
         ESP_LOGI(TAG, "IP OBTAINED");
  
         xEventGroupSetBits(wifi_events, gotIP);

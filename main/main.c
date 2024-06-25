@@ -1,16 +1,19 @@
-#include "esp_err.h"
-#include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "nvs_flash.h"
-#include "wifi-connect.h"
 #include <stdio.h>
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_err.h"
+#include "esp_log.h"
+#include "nvs_flash.h"
+
+#include "wifi-connect.h"
 #include "aws_cloud.h"
 #include "output_driver.h"
-#define TAG "main app"
-#define SSID_1 "time-appliance"
-#define PASS "time-appliance"
+
+
+#define TAG         "main app"
+#define SSID_1      "drover_ap"
+#define PASS        "dje83ke3"
 
 void wifi_sta_setup(void) {
   wifi_drivers();

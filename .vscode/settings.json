@@ -3,7 +3,8 @@
     "files.associations": {
         "esp_system.h": "c",
         "uart.h": "c",
-        "esp_log.h": "c"
+        "esp_log.h": "c",
+        "output_driver.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "idf.flashType": "JTAG"

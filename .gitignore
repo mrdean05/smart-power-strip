@@ -1,4 +1,5 @@
 build/
+main/cloud_certs/*
 components/esp32-i2c-lcd1602
 components/esp32-smbus
 components/esp-aws-iot

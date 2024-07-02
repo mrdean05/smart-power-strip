@@ -4,7 +4,8 @@
         "esp_system.h": "c",
         "uart.h": "c",
         "esp_log.h": "c",
-        "output_driver.h": "c"
+        "output_driver.h": "c",
+        "sub_pub_ota.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "idf.flashType": "JTAG"

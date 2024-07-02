@@ -7,8 +7,9 @@
 #include "nvs_flash.h"
 
 #include "wifi-connect.h"
-#include "aws_cloud.h"
+#include "device_shadow.h"
 #include "output_driver.h"
+#include "sub_pub_ota.h"
 
 
 #define TAG         "main app"
@@ -39,5 +40,6 @@ void app_main(void) {
     ESP_LOGE(TAG, "NVS init error");
   }
   wifi_sta_setup();
-  cloud_start();
+  shadow_start();
+  ota_start();
 }

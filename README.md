@@ -1,16 +1,29 @@
-<h2> ESP 32 based Appliance Control<h2>
+<h2> ESP 32 based Smart Power Strip <h2>
 
 ## Introduction
-This firmware development project focuses on an ESP32-based appliance control system utilizing IoT. Through AWS IoT, it enables remote appliance management via a dedicated mobile application. The ESP32 manages appliances via GPIO-connected relays and updates status on an LCD screen through I2C. Communication with the mobile app is facilitated through AWS Device Shadow and MQTT protocols.
-
+This firmware development project focuses on an ESP32-based smart power strip system utilizing IoT. Through AWS IoT, it enables remote appliance management via a dedicated mobile application. The ESP32 manages appliances via GPIO-connected relays and updates status on an LCD screen through I2C. Communication with the mobile app is facilitated through AWS Device Shadow and MQTT protocols.
 ![local.conf file](image.png)
 
 The firmware developemnt was divided into:
 * WiFi Connection/Disconnection:  Event group was used to achieve schronizing the occurence of wifi connection to the main task(thread)
 * AWS IoT core connection: Connecting to AWS cloud using certs amd keys, subcribe/publishing to an MQTT topic (device shadow)
 * Driver Device: I2C development to communication with the lcd and gpio development to communicate with the relays.
-
+![alt text](image-1.png)
 The above was achieved using ESP IDF.
+
+## Requirement
+The requirements include:
+    - Control 4 sockets using 4 relays
+    - Display the status of the relay on an LCD screen
+    - Connect to AWS IoT core and use AWS Device Shadow to manage interaction between appliance and  mobile application.
+    - Enable connection to a WiFi network.
+    - Able to rollout firmware update (OTA firmware update)
+
+## Components Used 
+The components used are below:
+    - MCU - ESP32
+    - Display Screen - 20 x 4 Lcd screen module
+    - Relay and circuitry
 
 ## Hardware Connection
 
@@ -26,15 +39,15 @@ The relays were connected to gpio 23, gpio 22, gpio 21, gpio 5.
 
 - Clone the repository 
 ```bash
-$ git clone https://github.com/mrdean05/time_based_appliance_control.git
+$ git clone https://github.com/mrdean05/smart-power-strip.git
 ```
 
 - Seed into the repo
 ```bash
-$ cd time_based_appliance_control
+$ cd smart-power-strip
 ```
 
-- Set up your credentials on IoT core and obtain the keys and certs
+- Set up your credentials on IoT core and obtain the keys and certss
 
 - Build your project
 ```bash

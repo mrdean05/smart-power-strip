@@ -362,8 +362,8 @@ error:
   vTaskDelete(NULL);
 }
 
-int cloud_start(void) {
-  printf("Starting cloud\n");
+int shadow_start(void) {
+  printf("Device Shadow Task\n");
 
   BaseType_t cloud_begin =
       xTaskCreate(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL);

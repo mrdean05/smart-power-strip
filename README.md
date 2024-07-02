@@ -37,6 +37,8 @@ The relays were connected to gpio 23, gpio 22, gpio 21, gpio 5.
 ## Get Started
 - Follow through this [link](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html) to set up esp idf.
 
+- Follow through this [link](https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html) to create certificate and keys for AWS IoT.
+
 - Clone the repository 
 ```bash
 $ git clone https://github.com/mrdean05/smart-power-strip.git

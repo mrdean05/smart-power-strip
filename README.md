@@ -15,7 +15,7 @@ The above was achieved using ESP IDF.
 The requirements include:
 * Control 4 sockets using 4 relays
 * Display the status of the relay on an LCD screen
-* Connect to AWS IoT core and use AWS Device Shadow to manage interaction between appliance and  mobile application.
+* Connect to AWS IoT core and use AWS Device Shadow to manage interaction between power strip and  mobile application.
 * Enable connection to a WiFi network.
 * Able to rollout firmware update (OTA firmware update)
 

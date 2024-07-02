@@ -1,5 +1,8 @@
 build/
-main/cloud_certs/
+main/cloud_certs/device.cert
+main/cloud_certs/device.key
+main/cloud_certs/deviceid.txt
+main/cloud_certs/endpoint.txt
 components/esp32-i2c-lcd1602
 components/esp32-smbus
 components/esp-aws-iot

@@ -1,29 +1,29 @@
 <h2> ESP 32 based Smart Power Strip <h2>
 
 ## Introduction
-This firmware development project focuses on an ESP32-based smart power strip system utilizing IoT. Through AWS IoT, it enables remote appliance management via a dedicated mobile application. The ESP32 manages appliances via GPIO-connected relays and updates status on an LCD screen through I2C. Communication with the mobile app is facilitated through AWS Device Shadow and MQTT protocols.
+This firmware development project focuses on an ESP32-based smart power strip system utilizing IoT. The power strip is connected remotely through AWS IoT with a mobile app. The ESP32 manages the sockets via GPIO-connected relays and updates status on an LCD screen through I2C. Communication with the mobile app is facilitated through AWS Device Shadow and MQTT protocols.
 ![local.conf file](image.png)
 
 The firmware developemnt was divided into:
 * WiFi Connection/Disconnection:  Event group was used to achieve schronizing the occurence of wifi connection to the main task(thread)
-* AWS IoT core connection: Connecting to AWS cloud using certs amd keys, subcribe/publishing to an MQTT topic (device shadow)
+* AWS IoT core connection: Connecting to AWS cloud using certs and keys, subcribe/publishing to an MQTT topic (device shadow)
 * Driver Device: I2C development to communication with the lcd and gpio development to communicate with the relays.
 ![alt text](image-1.png)
 The above was achieved using ESP IDF.
 
 ## Requirement
 The requirements include:
-    - Control 4 sockets using 4 relays
-    - Display the status of the relay on an LCD screen
-    - Connect to AWS IoT core and use AWS Device Shadow to manage interaction between appliance and  mobile application.
-    - Enable connection to a WiFi network.
-    - Able to rollout firmware update (OTA firmware update)
+* Control 4 sockets using 4 relays
+* Display the status of the relay on an LCD screen
+* Connect to AWS IoT core and use AWS Device Shadow to manage interaction between appliance and  mobile application.
+* Enable connection to a WiFi network.
+* Able to rollout firmware update (OTA firmware update)
 
 ## Components Used 
 The components used are below:
-    - MCU - ESP32
-    - Display Screen - 20 x 4 Lcd screen module
-    - Relay and circuitry
+* MCU - ESP32
+* Display Screen - 20 x 4 Lcd screen module
+* Relay and circuitry
 
 ## Hardware Connection
 

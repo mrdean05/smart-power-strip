@@ -1,3 +1,13 @@
+/**
+ ******************************************************************************
+ * @file      aws_custom_utils.c
+ * @author    ESP-IDF Team
+ * @brief     ESP AWS Device Shadow Firmware Implementation
+ *
+ ******************************************************************************
+ */
+
+/* Header files */
 #include <stdio.h>
 #include "aws_custom_utils.h"
 #include <stdbool.h>

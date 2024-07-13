@@ -1,3 +1,12 @@
+/**
+ ******************************************************************************
+ * @file      sub_pub_ota.c
+ * @author    Dean Prince Agbodjan
+ * @brief     MQTT Subcribe Publish Implementation
+ *
+ ******************************************************************************
+ */
+/* Header Files */
 #include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
@@ -30,39 +39,52 @@
 char *ota_url;
 static bool ota_update_done = false;
 
-// Device cert and private key
+/**
+ * @brief Device cert and private key
+ */
 extern const uint8_t
     certificate_pem_crt_start[] asm("_binary_device_cert_start");
 extern const uint8_t certificate_pem_crt_end[] asm("_binary_device_cert_end");
 extern const uint8_t private_pem_key_start[] asm("_binary_device_key_start");
 extern const uint8_t private_pem_key_end[] asm("_binary_device_key_end");
-// Root Certificate
+
+/**
+ * @brief Root Certificate
+ */
 extern const uint8_t aws_root_ca_pem_start[] asm("_binary_server_cert_start");
 extern const uint8_t aws_root_ca_pem_end[] asm("_binary_server_cert_end");
 
-// AWS IoT Endpoint specific to account and region
+/**
+ * @brief AWS IoT Endpoint specific to account and region
+ */
 extern const uint8_t endpoint_txt_start[] asm("_binary_endpoint_txt_start");
 extern const uint8_t endpoint_txt_end[] asm("_binary_endpoint_txt_end");
 
-// Define default AWS MQTT port
+/**
+ * @brief Define default AWS MQTT port
+ */
 uint32_t port = AWS_IOT_MQTT_PORT;
 
 int getMessage(char *mPayload, int len);
 
+/**
+ * @brief This function is the mqtt subcribe handler 
+ */
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
                                     uint16_t topicNameLen,
                                     IoT_Publish_Message_Params *params,
                                     void *pData) {
-  ESP_LOGI(TAG, "Subscribe callback");
   char *userData = (char *)params->payload;
   int len = (int)params->payloadLen;
-  printf("User Data: %.*s \n", len, userData);
   ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int)params->payloadLen,
            (char *)params->payload);
-  int feedback = getMessage((char *)params->payload, (int)params->payloadLen);
-  printf("%d\n", feedback);
+  /* Get and parses cJSON payload and OTA firmware upgrades */
+  getMessage((char *)params->payload, (int)params->payloadLen);
 }
 
+/**
+ * @brief Disconnect Callback Handler. It tries to reconnect afetr a disconnection. 
+ */
 void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data) {
   ESP_LOGW(TAG, "MQTT Disconnect");
   IoT_Error_t rc = FAILURE;
@@ -71,6 +93,7 @@ void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data) {
     return;
   }
 
+  /* Attempt to reconnect*/
   if (aws_iot_is_autoreconnect_enabled(pClient)) {
     ESP_LOGI(TAG,
              "Auto Reconnect is enabled, Reconnecting attempt will start now");
@@ -85,11 +108,14 @@ void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data) {
   }
 }
 
+/**
+ * @brief Task handles MQTT initialization, subscribes to a MQTT topic to receive url for OTA.
+ */
 static void aws_sub_pub_task(void *param) {
 
   IoT_Error_t rc = FAILURE;
 
-  // Initialize mqtt parameter
+  /* Initialize MQTT parameter */
   AWS_IoT_Client client;
   IoT_Client_Init_Params mqttInitParams = iotClientInitParamsDefault;
   ESP_LOGI(TAG, "AWS IoT SDK Version %d.%d.%d-%s", VERSION_MAJOR, VERSION_MINOR,
@@ -107,7 +133,7 @@ static void aws_sub_pub_task(void *param) {
   mqttInitParams.disconnectHandler = disconnectCallbackHandler;
   mqttInitParams.disconnectHandlerData = NULL;
 
-  // intialize mqtt
+  /* Intialize MQTT */
   rc = aws_iot_mqtt_init(&client, &mqttInitParams);
   if (SUCCESS != rc) {
     ESP_LOGE(TAG, "aws_iot_mqtt_init returned error : %d ", rc);
@@ -118,7 +144,7 @@ static void aws_sub_pub_task(void *param) {
   //   xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
   //                       false, true, portMAX_DELAY);
 
-  // Initialize connect parameters
+  /* Initialize connect parameters */
   const char *CONFIG_AWS_CLIENT_ID = "ota";
   IoT_Client_Connect_Params connectParams = iotClientConnectParamsDefault;
   connectParams.keepAliveIntervalInSec = 10;
@@ -129,6 +155,7 @@ static void aws_sub_pub_task(void *param) {
   connectParams.clientIDLen = (uint16_t)strlen(CONFIG_AWS_CLIENT_ID);
   connectParams.isWillMsgPresent = false;
 
+  /* Connect to AWS IOT Core via MQTT */
   ESP_LOGI(TAG, "Connecting to AWS...");
   do {
     rc = aws_iot_mqtt_connect(&client, &connectParams);
@@ -153,9 +180,9 @@ static void aws_sub_pub_task(void *param) {
     abort();
   }
 
+  /* MQTT subscribe and registered MQTT subscribe handler */
   const char *TOPIC = "iotDevice/ota";
   const int TOPIC_LEN = strlen(TOPIC);
-
 
   ESP_LOGI(TAG, "Subscribing...");
   rc = aws_iot_mqtt_subscribe(&client, TOPIC, TOPIC_LEN, QOS0,
@@ -168,12 +195,12 @@ static void aws_sub_pub_task(void *param) {
   while ((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc ||
           SUCCESS == rc))
     {
-
-    // Max time the yield function will wait for read messages
+    /* Max time the yield function will wait for read messages */
     rc = aws_iot_mqtt_yield(&client, 100);
     if (NETWORK_ATTEMPTING_RECONNECT == rc) {
-      // If the client is attempting to reconnect we will skip the rest of the
-      // loop.
+      /**
+       *  If the client is attempting to reconnect we will skip the rest of the loop.
+       */ 
       continue;
     }
     vTaskDelay(1000);
@@ -182,10 +209,16 @@ static void aws_sub_pub_task(void *param) {
   abort();
 }
 
+/**
+ * @brief This functions handles parsing cJSON payloads and OTA firmware upgrades. 
+ * @param [IN] Payload message
+ * @param [IN] Length of payload
+ * @retval Returns status of cJSON payload and OTA firmware upgrades. -1 for cJSON NULL and 0 for success 
+ */
 int getMessage(char *mPayload, int len)
 {
-
     cJSON *url = NULL;
+    /* Parse cJSON payload */
     cJSON *json = cJSON_ParseWithLength(mPayload, len);
     int status = 0;
 
@@ -207,16 +240,17 @@ int getMessage(char *mPayload, int len)
     }
 
     ota_url = url->valuestring;
-    printf("%s \n", ota_url);
 
+    /* Begin firmware upgrade */
     if (do_firmware_upgrade(ota_url) == ESP_OK)
     {
-        // Firmware upgrade successful
+        /* Firmware upgrade successful */
         ota_update_done = true;
     }
 
     if (ota_update_done)
     {
+        /* Restart after sucessful firmware download */
         esp_restart();
     }
 
@@ -225,14 +259,19 @@ end:
     return status;
 }
 
-
+/**
+ * @brief This function handles the creation of aws publish subscribe task. 
+ * @retval 
+ *  - ESP_OK: succeed 
+ *  - ESP_FAIL: failed  
+ */
 int ota_start(void) {
-    printf(" Starting OTA process \n");
-
+  /* Task Creation */
   BaseType_t cloud_begin =
       xTaskCreate(&aws_sub_pub_task, "aws_sub_pub_task", 9216, NULL, 5, NULL);
   if (cloud_begin != pdPASS) {
     ESP_LOGE(TAG, "Couldnt create a cloud task\n");
+    return ESP_FAIL;
   }
   return ESP_OK;
 }

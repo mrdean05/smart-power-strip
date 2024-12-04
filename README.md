@@ -1,4 +1,4 @@
-<h2> ESP 32 based Smart Power Strip <h2>
+<h2> Internet of Things based Smart Power Strip <h2>
 
 ## Introduction
 This firmware development project focuses on an ESP32-based smart power strip system utilizing IoT. The power strip is connected remotely through AWS IoT with a mobile app. The ESP32 manages the sockets via GPIO-connected relays and updates status on an LCD screen through I2C. Communication with the mobile app is facilitated through AWS Device Shadow and MQTT protocols.
